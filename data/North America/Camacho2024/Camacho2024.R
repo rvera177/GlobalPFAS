@@ -10,7 +10,7 @@ Camacho <- left_join(Camacho_coords, Camacho_PFAS_DATA, by ="Sample_ID")
 # into 0, which is a Non-Detect. This is because the location
 # was tested for a compound, but didn't find a reportable level of it
 
-#i do this with a dplyr pipe, but their are multiple ways of doing this
+#i do this with a dplyr pipe, but there are multiple ways of doing this
 library(dplyr)
 Camacho <- Camacho %>% 
   mutate(across(everything(), ~replace_na(as.character(.), "0")))
@@ -21,18 +21,16 @@ head(Camacho)
 #EXCEPT Sample_ID and Florida_County_Name
 Camacho <- Camacho %>%
   mutate(across(-c(Sample_ID, Florida_County_Name), as.numeric))
-#i like how the table is set up now, so I'm going to save as a csv.
-
-
 
 #plotting
 #convert to SF object for plotting
 library(sf)
 Florida_PFAS= st_as_sf(Camacho,
-               coords = c("Longitude", "Latitude"),  # x = Long, y = Lat
-               crs = 4326) 
+                       coords = c("Longitude", "Latitude"),  # x = Long, y = Lat
+                       crs = 4326) 
 
 plot(st_geometry(Florida_PFAS), col = "blue")
+
 
 
 #I'm going to map PFOA, so we can see the range of concentrations spatially
@@ -47,6 +45,19 @@ ggplot(data = Florida_PFAS) +
           color = "black",
           size = 2, stroke = 0.5,
           show.legend = TRUE) + 
+  scale_fill_gradientn(colors = pallete(100),
+    na.value = "white",
+    name = "PFOA (ng/L)") +
+  theme_classic()
+
+#another one
+ggplot(data = Florida_PFAS) +
+  geom_sf(data = Florida_PFAS,
+          aes(fill = PFOA), #you can change "fill" to be any column inside of the Florida_PFAS dataset
+          shape = 21,
+          color = "black",
+          size = 2, stroke = 0.5,
+          show.legend = TRUE) + 
   scale_fill_gradientn(trans = "log10", #using log10 so i can see variability better
                        colors = pallete(100),
                        na.value = "white",
@@ -54,7 +65,5 @@ ggplot(data = Florida_PFAS) +
   theme_classic()
 
 
-
-
-#i'm saving the data as a geopackage so i can make figures in ArcGIS
-st_write(Florida_PFAS, "Camacho.gpkg", delete_dsn = TRUE, overwrite=TRUE)
+#st_write() is for saving the data as a geopackage so i can make figures in ArcGIS
+#st_write(Florida_PFAS, "Camacho.gpkg", delete_dsn = TRUE, overwrite=TRUE)
