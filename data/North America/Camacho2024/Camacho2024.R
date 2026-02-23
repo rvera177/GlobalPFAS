@@ -31,6 +31,14 @@ Florida_PFAS= st_as_sf(Camacho,
 
 plot(st_geometry(Florida_PFAS), col = "blue")
 
+#plotting the data in ascending order, so we can see how concentrations are spread out
+PFOA_ascending = Florida_PFAS$PFOA[order(Florida_PFAS$PFOA)]
+log_PFOA_ascending = log10(Florida_PFAS$PFOA)[order(Florida_PFAS$PFOA)]
+
+plot(PFOA_ascending, xlab="sample number", ylab="PFOA (ng/L)", 
+     main="PFOA concentrations in ascending order", col="blue")
+plot(log_PFOA_ascending, xlab="sample number", ylab="PFOA (ng/L)", 
+     main = "log10(PFOA) in ascending order", col="blue")
 
 
 #I'm going to map PFOA, so we can see the range of concentrations spatially
