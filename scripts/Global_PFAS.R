@@ -2,7 +2,7 @@
 
 #This script is part of the global PFAS modeling project
 #Created February 2, 2026 by RV
-#Last edited: February 2, 2026 by RV
+#Last edited: February 24, 2026 by RV
 #Edits will be uploaded to Github for easy access
 
 #working with global caravan data. 
@@ -34,25 +34,26 @@ library(sf) #plotting the spatial objects
 library(ggplot2)
 library(rnaturalearth) #for plotting country  outlines
 library(rnaturalearthdata)
+library(dplyr)
 
 #pull in global caravan data from my github. 
-PFOA_Raw <- read_csv("https://raw.githubusercontent.com/rvera177/MillRiver_PFAS/refs/heads/main/data/Caravan_PFOA.csv")
-PFOS_Raw = read_csv("https://raw.githubusercontent.com/rvera177/MillRiver_PFAS/refs/heads/main/data/Caravan_PFOS.csv")
+Caravan_PFOA_Raw <- read_csv("https://raw.githubusercontent.com/rvera177/MillRiver_PFAS/refs/heads/main/data/Caravan_PFOA.csv")
+Caravan_PFOS_Raw = read_csv("https://raw.githubusercontent.com/rvera177/MillRiver_PFAS/refs/heads/main/data/Caravan_PFOS.csv")
 site_info = read_csv("https://raw.githubusercontent.com/rvera177/MillRiver_PFAS/refs/heads/main/data/Caravan_wqms_site_info.csv")
 
 #combine PFOA and PFOS by column names. They have the same column names so this should be easy
-PFAS_Raw = rbind(PFOA_Raw,PFOS_Raw)
+Caravan_PFAS_Raw = rbind(Caravan_PFOA_Raw,Caravan_PFOS_Raw)
 
 #the raw datasets are in micrograms per liter. Convert to nanograms per liter
-  PFAS <- PFAS_Raw %>% 
+Caravan_PFAS <- Caravan_PFAS_Raw %>% 
   mutate(obs = obs* 1000) #converts ug/L column to ng/L by simple multiplying
   #make sure you don't run this twice
 
 #combine site coordinate information with PFAS concentrations
-PFAS <- left_join(PFAS, site_info, by = "wqms_id")
+Caravan_PFAS <- left_join(Caravan_PFAS, site_info, by = "wqms_id")
 
 #convert to SF object for plotting
-PFAS= st_as_sf(PFAS,
+Caravan_PFAS= st_as_sf(Caravan_PFAS,
                   coords = c("wqms_lon", "wqms_lat"),  # x = Long, y = Lat
                   crs = 4326) 
 
@@ -60,17 +61,46 @@ PFAS= st_as_sf(PFAS,
 world <- ne_countries(scale = "medium", returnclass = "sf")
 
 #update the coordinate system to match the world map
-PFAS = st_transform(PFAS, st_crs(world))
+Caravan_PFAS = st_transform(Caravan_PFAS, st_crs(world))
 
 ggplot(data = world) +
   geom_sf(fill = "gray95", color = "gray20") +
-  geom_sf(data = PFAS[PFAS$variable == "PFOS",], color = "red", size = 2, shape = 19) +
-  geom_sf(data = PFAS[PFAS$variable == "PFOA",], add=TRUE, color = "blue", size = 2, shape = 19) +
+  geom_sf(data = Caravan_PFAS[Caravan_PFAS$variable == "PFOS",], color = "red", size = 2, shape = 19) +
+  geom_sf(data = Caravan_PFAS[Caravan_PFAS$variable == "PFOA",], add=TRUE, color = "blue", size = 2, shape = 19) +
   ggtitle("Global Map of PFOA and PFAS") +
   theme_classic()
 
+#Now that i have this large Caravan dataset plotted,
+#I want to bring in the papers our group has been
+#extracting data from
+
+Camacho_2024 = read.csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Camacho_et_al_2024_Florida.csv")
+Sims_2025 = read.csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Sims_et_al_2025_%20Western_United_States.csv")
+
+All_PFAS = bind_rows(Camacho_2024, Sims_2025)
+
+#ggplot of an sf object won't work if their are NA's in the lat and long
+All_PFAS_sf <- All_PFAS %>%#remove NA's now
+  filter(!is.na(Longitude..Decimal.), !is.na(Latitude..Decimal.))
+#convert to SF object for plotting
+All_PFAS_sf= st_as_sf(All_PFAS_sf,
+                       coords = c("Longitude..Decimal.", "Latitude..Decimal."),  # x = Long, y = Lat
+                       crs = 4326) 
+
+#update the coordinate system to match the world map
+All_PFAS_sf = st_transform(All_PFAS_sf, st_crs(world))
+
+#issue is probably NA's or non_numerics in the PFOS and PFOA columns
+ggplot(data = world) +
+  geom_sf(fill = "gray95", color = "gray20") +
+  geom_sf(data = All_PFAS_sf[All_PFAS_sf$variable == "PFOS",], color = "red", size = 2, shape = 19) +
+  geom_sf(data = All_PFAS_sf[All_PFAS_sf$variable == "PFOA",], add=TRUE, color = "blue", size = 2, shape = 19) +
+  ggtitle("Global Map of PFOA and PFAS") +
+  theme_classic()
+
+
 #everything above is my own code
-#the following is leaflet code made with help from umass gen AI because I never made this before
+#the following is leaflet code made with help from UMass Gen AI because I never made this before
 library(leaflet)
 library(htmlwidgets)
 
@@ -82,7 +112,7 @@ make_popup <- function(sf_obj) {
     paste0("<b>", names(df), "</b>: ", ifelse(is.na(r), "", r), collapse = "<br/>")
   })
 }
-PFAS$popup <- make_popup(PFAS)
+Caravan_PFAS$popup <- make_popup(Caravan_PFAS)
 
 #build the leaflet map
 Caravan_PFOA_PFAS_map <- leaflet(options = leafletOptions(minZoom = 2, maxZoom = 18)) %>%
@@ -94,14 +124,14 @@ Caravan_PFOA_PFAS_map <- leaflet(options = leafletOptions(minZoom = 2, maxZoom =
               group = "World",
               popup = ~name) %>%
   # PFOA points
-  addCircleMarkers(data = PFAS[PFAS$variable == "PFOS",],
+  addCircleMarkers(data = Caravan_PFAS[Caravan_PFAS$variable == "PFOS",],
                    color = "red", fillColor = "red",
                    radius = 5, stroke = FALSE, fillOpacity = 0.9,
                    popup = ~popup,
                    group = "PFOS",
                    clusterOptions = markerClusterOptions()) %>%
   # PFOS points
-  addCircleMarkers(data = PFAS[PFAS$variable == "PFOA",],
+  addCircleMarkers(data = Caravan_PFAS[Caravan_PFAS$variable == "PFOA",],
                    color = "blue", fillColor = "blue",
                    radius = 5, stroke = FALSE, fillOpacity = 0.9,
                    popup = ~popup,
