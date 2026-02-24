@@ -74,17 +74,24 @@ ggplot(data = world) +
 #I want to bring in the papers our group has been
 #extracting data from
 
-Camacho_2024 = read.csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Camacho_et_al_2024_Florida.csv")
-Sims_2025 = read.csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Sims_et_al_2025_%20Western_United_States.csv")
+Camacho_2024 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Camacho_et_al_2024_Florida.csv")
+Sims_2025 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Sims_et_al_2025_%20Western_United_States.csv")
+NH_DES_2026 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/NewHampshire_DES_PFAS_Data_Dump.csv")
+Ahrens_2023 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Ahrens_et_al_2023_Arctic.csv")
+Breitmeyer_2023 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Breitmeyer_et_al_2023_Pennsylvania.csv")
+Sharma_2016 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Sharma_et_al_2016_Ganges_River.csv")
 
-All_PFAS = bind_rows(Camacho_2024, Sims_2025)
+All_PFAS = bind_rows(Camacho_2024, Sims_2025, 
+      NH_DES_2026, Breitmeyer_2023, Ahrens_2023, Sharma_2016)
 
 #ggplot of an sf object won't work if their are NA's in the lat and long
-All_PFAS_sf <- All_PFAS %>%#remove NA's now
-  filter(!is.na(Longitude..Decimal.), !is.na(Latitude..Decimal.))
+All_PFAS_sf <- All_PFAS %>% #remove NA's now
+  mutate(across(-all_of(c("Article (Author et al YYYY)", "Sample Name", "Sample Type",
+      "Sample Date (MM/DD/YYY)", "Sample Time", "Analysis Method")), ~ as.numeric(.))) %>%
+  filter(!is.na(`Latitude`), !is.na(`Longitude`))
 #convert to SF object for plotting
 All_PFAS_sf= st_as_sf(All_PFAS_sf,
-                       coords = c("Longitude..Decimal.", "Latitude..Decimal."),  # x = Long, y = Lat
+                       coords = c("Longitude", "Latitude"),  # x = Long, y = Lat
                        crs = 4326) 
 
 #update the coordinate system to match the world map
@@ -93,8 +100,7 @@ All_PFAS_sf = st_transform(All_PFAS_sf, st_crs(world))
 #issue is probably NA's or non_numerics in the PFOS and PFOA columns
 ggplot(data = world) +
   geom_sf(fill = "gray95", color = "gray20") +
-  geom_sf(data = All_PFAS_sf[All_PFAS_sf$variable == "PFOS",], color = "red", size = 2, shape = 19) +
-  geom_sf(data = All_PFAS_sf[All_PFAS_sf$variable == "PFOA",], add=TRUE, color = "blue", size = 2, shape = 19) +
+  geom_sf(data = All_PFAS_sf %>% filter(!is.na(PFOA)), color = "red", size = 2, shape = 19, na.rm=TRUE) +
   ggtitle("Global Map of PFOA and PFAS") +
   theme_classic()
 
@@ -112,6 +118,45 @@ make_popup <- function(sf_obj) {
     paste0("<b>", names(df), "</b>: ", ifelse(is.na(r), "", r), collapse = "<br/>")
   })
 }
+
+
+All_PFAS$popup <- make_popup(All_PFAS)
+
+#build the leaflet map
+RV_Teja_map <- leaflet(options = leafletOptions(minZoom = 2, maxZoom = 18)) %>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  # world polygon
+  addPolygons(data = world,
+              color = "#444444", weight = 1,
+              fillColor = "lightgrey", fillOpacity = 0.5,
+              group = "World",
+              popup = ~name) %>%
+  # PFOA points
+  addCircleMarkers(data = All_PFAS %>% filter(!is.na(PFOS)),
+                   color = "red", fillColor = "red",
+                   radius = 5, stroke = FALSE, fillOpacity = 0.9,
+                   popup = ~popup,
+                   group = "PFOS",
+                   clusterOptions = markerClusterOptions()) %>%
+  # PFOS points
+  addCircleMarkers(data = All_PFAS %>% filter(!is.na(PFOA)),
+                   color = "blue", fillColor = "blue",
+                   radius = 5, stroke = FALSE, fillOpacity = 0.9,
+                   popup = ~popup,
+                   group = "PFOA",
+                   clusterOptions = markerClusterOptions()) %>%
+  addLayersControl(overlayGroups = c("World", "PFOS", "PFOA"),
+                   options = layersControlOptions(collapsed = FALSE)) %>%
+  addLegend(position = "topright",
+            colors = c("red", "blue"),
+            labels = c("PFOS", "PFOA"),
+            title = "Compounds")
+
+# show map
+RV_Teja_map
+
+
+#Caravan
 Caravan_PFAS$popup <- make_popup(Caravan_PFAS)
 
 #build the leaflet map
@@ -146,6 +191,10 @@ Caravan_PFOA_PFAS_map <- leaflet(options = leafletOptions(minZoom = 2, maxZoom =
 
 # show map
 Caravan_PFOA_PFAS_map
+
+
+
+
 
 # (optional) save to an HTML file
 # saveWidget(Caravan_PFOA_PFAS_map, "Caravan_PFOA_PFAS_map.html", selfcontained = TRUE)
