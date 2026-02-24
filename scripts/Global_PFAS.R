@@ -58,8 +58,11 @@ Caravan_PFAS= st_as_sf(Caravan_PFAS,
                   crs = 4326) 
 
 #plot them on a world map
-world <- ne_countries(scale = "medium", returnclass = "sf")
-
+world <- ne_countries(scale = "high", returnclass = "sf")
+rivers <- ne_download(scale = 10, 
+                      type = 'rivers_lake_centerlines', 
+                      category = 'physical', 
+                      returnclass = "sf")
 #update the coordinate system to match the world map
 Caravan_PFAS = st_transform(Caravan_PFAS, st_crs(world))
 
@@ -131,20 +134,24 @@ RV_Teja_map <- leaflet(options = leafletOptions(minZoom = 2, maxZoom = 18)) %>%
               fillColor = "lightgrey", fillOpacity = 0.5,
               group = "World",
               popup = ~name) %>%
+  addPolylines(data = rivers,
+              color = "blue", weight = 1,
+              group = "World",
+              popup = ~name) %>%
   # PFOA points
   addCircleMarkers(data = All_PFAS %>% filter(!is.na(PFOS)),
                    color = "red", fillColor = "red",
                    radius = 5, stroke = FALSE, fillOpacity = 0.9,
                    popup = ~popup,
-                   group = "PFOS",
-                   clusterOptions = markerClusterOptions()) %>%
+                   #clusterOptions = markerClusterOptions(),
+                   group = "PFOS") %>%
   # PFOS points
   addCircleMarkers(data = All_PFAS %>% filter(!is.na(PFOA)),
                    color = "blue", fillColor = "blue",
-                   radius = 5, stroke = FALSE, fillOpacity = 0.9,
+                   radius = 3, stroke = FALSE, fillOpacity = 0.9,
                    popup = ~popup,
-                   group = "PFOA",
-                   clusterOptions = markerClusterOptions()) %>%
+                   #clusterOptions = markerClusterOptions(),
+                   group = "PFOA") %>%
   addLayersControl(overlayGroups = c("World", "PFOS", "PFOA"),
                    options = layersControlOptions(collapsed = FALSE)) %>%
   addLegend(position = "topright",
