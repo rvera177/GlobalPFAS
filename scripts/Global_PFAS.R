@@ -9,7 +9,7 @@
 #this data comes from caravan-Qual lite. Released December 11, 2025
 #link to lite dataset: https://zenodo.org/records/17787066 
 
-#Question. where did they get this data, and where did all the good stones go?
+#Question. where did they get this data?
 
 #Answer from the preprint description -> The Water quality data in Caravan-Qual is  compiled from several existing 
 #global, regional and national databases (Figure 4 of Caravan Preprint), 
