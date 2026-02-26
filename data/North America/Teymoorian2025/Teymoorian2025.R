@@ -17,3 +17,7 @@ All_T <- bind_rows(T2018, T2019, T2020, T2021)
 
 #bring in the coords
 Tcoords = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/North%20America/Teymoorian2025/Teymoorian_et_al_2025_Quebec_site_coords.csv")
+
+Teymoorian <- left_join(All_T, Tcoords, by = "Site name")
+
+#some didn't come in correctly. NEed to fix original csv files
