@@ -47,7 +47,7 @@ Caravan_PFOA <- Caravan_PFOA_Raw %>%
   rename(PFOA = obs) %>% #change obs column to coresponding compound
   rename(`Sample Date (MM/DD/YYY)` = dates) %>%
   mutate(PFOA = PFOA* 1000) %>% #converts ug/L column to ng/L by simple multiplying
-  select(-c(unit, variable)) #i don't care about unit or variable, so i'm removing them
+  select(-c(unit, variable)) #i don't care about the unit or variable columns, so i'm removing them
 
 Caravan_PFOS <- Caravan_PFOS_Raw %>%
   rename(PFOS = obs) %>%
@@ -57,6 +57,12 @@ Caravan_PFOS <- Caravan_PFOS_Raw %>%
 
 Caravan_PFAS = bind_rows(Caravan_PFOA, Caravan_PFOS)
 
+#this next step might be unnescesary for a model.
+#PFOA and PFOS are in seperate rows, but i have their site id
+#and sample date. I'm going to combine PFOA and PFOS so we know both values 
+#across a single sampling event. This may have introduced error if 
+#multiple samples were collected at a site within a single day, which is definitely possible
+
 Caravan_PFAS <- Caravan_PFAS %>%
   group_by(wqms_id, `Sample Date (MM/DD/YYY)`) %>%
   summarize(
@@ -65,11 +71,12 @@ Caravan_PFAS <- Caravan_PFAS %>%
     streamflow = sum(streamflow, na.rm = TRUE),
     .groups = "drop"
   ) %>%
- # Optional: Convert 0s back to NA if both original values were missing
+ #Converts 0s back to NA if both original values were missing
   mutate(across(c(PFOA, PFOS, streamflow), ~na_if(., 0)))
 
 #combine site coordinate information with PFAS concentrations
 Caravan_PFAS <- left_join(Caravan_PFAS, site_info, by = "wqms_id")
+
 
 #i'm going to rename columns to be consistent with other datasets
 Caravan_PFAS <- Caravan_PFAS %>%
@@ -81,7 +88,7 @@ Caravan_PFAS <- Caravan_PFAS %>%
   mutate(`Sample Type` = "Surface Water") %>%
   #I also want to bring in all of the data from Caravan_PFAS, but it has a lot of info that i don't really need at the moment
   # cutting down on some of the columns in Caravan_PFAS
-  select(c("Sample Name", "Sample Date (MM/DD/YYY)", Longitude, Latitude, PFOA, PFOS, Streamflow))
+  select(c("Sample Name", "Sample Date (MM/DD/YYY)", "Sample Type", "Article (Author et al YYYY)", Longitude, Latitude, PFOA, PFOS, Streamflow))
   
 #convert to SF object for plotting
 Caravan_PFAS_sf= st_as_sf(Caravan_PFAS,
@@ -89,15 +96,15 @@ Caravan_PFAS_sf= st_as_sf(Caravan_PFAS,
                   crs = 4326) 
 
 #plot them on a world map
-world <- ne_countries(scale = "large", returnclass = "sf")
+#world <- ne_countries(scale = "large", returnclass = "sf")
 rivers <- ne_download(scale = 10, 
                       type = 'rivers_lake_centerlines', 
                       category = 'physical', 
                       returnclass = "sf")
-#update the coordinate system to match the world map
-Caravan_PFAS_sf = st_transform(Caravan_PFAS_sf, st_crs(world))
+#update the coordinate system to match the rivers layer
+Caravan_PFAS_sf = st_transform(Caravan_PFAS_sf, st_crs(rivers))
 
-ggplot(data = world) +
+ggplot(data = rivers) +
   geom_sf(fill = "gray95", color = "gray20") +
   geom_sf(data = Caravan_PFAS_sf %>% filter(!is.na(PFOA)), color = "red", size = 2, shape = 19) +
   geom_sf(data = Caravan_PFAS_sf %>% filter(!is.na(PFOS)), add=TRUE, color = "blue", size = 2, shape = 19) +
@@ -115,12 +122,14 @@ Ahrens_2023 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/re
 Breitmeyer_2023 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Breitmeyer_et_al_2023_Pennsylvania.csv")
 Sharma_2016 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Sharma_et_al_2016_Ganges_River.csv")
 Zhang_2016 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Zhang_et_al_2016_RI_NY.csv")
+Scott_2009 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Scott_et_al_2009_Canada.csv")
+Goodrow_2020 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Goodrow_et_al_2020_New_Jersey.csv")
 
 All_PFAS = bind_rows(Camacho_2024, Sims_2025, 
-      NH_DES_2026, Breitmeyer_2023, Ahrens_2023, Sharma_2016, Caravan_PFAS, Zhang_2016)
+      NH_DES_2026, Breitmeyer_2023, Ahrens_2023, Sharma_2016, Caravan_PFAS, Zhang_2016, Scott_2009, Goodrow_2020)
 
 #ggplot of an sf object won't work if their are NA's in the lat and long
-All_PFAS_sf <- All_PFAS %>% #remove NA's now
+All_PFAS_sf <- All_PFAS %>% #remove NA's and make numeric. if not numeric, turns into an NA
   mutate(across(-all_of(c("Article (Author et al YYYY)", "Sample Name", "Sample Type",
       "Sample Date (MM/DD/YYY)", "Sample Time", "Analysis Method")), ~ as.numeric(.))) %>%
   filter(!is.na(`Latitude`), !is.na(`Longitude`))
@@ -129,11 +138,10 @@ All_PFAS_sf= st_as_sf(All_PFAS_sf,
                        coords = c("Longitude", "Latitude"),  # x = Long, y = Lat
                        crs = 4326) 
 
-#update the coordinate system to match the world map
-All_PFAS_sf = st_transform(All_PFAS_sf, st_crs(world))
+#updating the coordinate system to match the world map
+All_PFAS_sf = st_transform(All_PFAS_sf, st_crs(rivers))
 
-#issue is probably NA's or non_numerics in the PFOS and PFOA columns
-ggplot(data = world) +
+ggplot(data = rivers) +
   geom_sf(fill = "gray95", color = "gray20") +
   geom_sf(data = All_PFAS_sf %>% filter(!is.na(PFOA)), color = "red", size = 2, shape = 19, na.rm=TRUE) +
   ggtitle("Global Map of PFOA and PFAS") +
@@ -160,15 +168,9 @@ All_PFAS$popup <- make_popup(All_PFAS)
 #build the leaflet map
 RV_Teja_map <- leaflet(options = leafletOptions(minZoom = 2, maxZoom = 18)) %>%
   addProviderTiles(providers$CartoDB.Positron) %>%
-  # world polygon
-  addPolygons(data = world,
-              color = "#444444", weight = 1,
-              fillColor = "lightgrey", fillOpacity = 0.5,
-              group = "World",
-              popup = ~name) %>%
   addPolylines(data = rivers,
               color = "blue", weight = 1,
-              group = "World",
+              group = "rivers",
               popup = ~name) %>%
   # PFOA points
   addCircleMarkers(data = All_PFAS %>% filter(!is.na(PFOS)),
@@ -184,7 +186,7 @@ RV_Teja_map <- leaflet(options = leafletOptions(minZoom = 2, maxZoom = 18)) %>%
                    popup = ~popup,
                    #clusterOptions = markerClusterOptions(),
                    group = "PFOA") %>%
-  addLayersControl(overlayGroups = c("World", "PFOS", "PFOA"),
+  addLayersControl(overlayGroups = c("rivers", "PFOS", "PFOA"),
                    options = layersControlOptions(collapsed = FALSE)) %>%
   addLegend(position = "topright",
             colors = c("red", "blue"),
@@ -195,43 +197,6 @@ RV_Teja_map <- leaflet(options = leafletOptions(minZoom = 2, maxZoom = 18)) %>%
 RV_Teja_map
 
 
-#Caravan
-Caravan_PFAS$popup <- make_popup(Caravan_PFAS)
-
-#build the leaflet map
-Caravan_PFOA_PFAS_map <- leaflet(options = leafletOptions(minZoom = 2, maxZoom = 18)) %>%
-  addProviderTiles(providers$CartoDB.Positron) %>%
-  # world polygon
-  addPolygons(data = world,
-              color = "#444444", weight = 1,
-              fillColor = "lightgrey", fillOpacity = 0.5,
-              group = "World",
-              popup = ~name) %>%
-  # PFOA points
-  addCircleMarkers(data = Caravan_PFAS %>% filter(!is.na(PFOS)),
-                   color = "red", fillColor = "red",
-                   radius = 3, stroke = FALSE, fillOpacity = 0.9,
-                   popup = ~popup,
-                   #clusterOptions = markerClusterOptions(),
-                   group = "PFOS") %>%
-  # PFOS points
-  addCircleMarkers(data = Caravan_PFAS %>% filter(!is.na(PFOA)),
-                   color = "blue", fillColor = "blue",
-                   radius = 3, stroke = FALSE, fillOpacity = 0.9,
-                   popup = ~popup,
-                   #clusterOptions = markerClusterOptions(),
-                   group = "PFOA") %>%
-  addLayersControl(overlayGroups = c("World", "PFOS", "PFOA"),
-                   options = layersControlOptions(collapsed = FALSE)) %>%
-  addLegend(position = "topright",
-            colors = c("red", "blue"),
-            labels = c("PFOS", "PFOA"),
-            title = "Compounds")
-
-# show map
-Caravan_PFOA_PFAS_map
-
-
-# (optional) save to an HTML file
-# saveWidget(Caravan_PFOA_PFAS_map, "Caravan_PFOA_PFAS_map.html", selfcontained = TRUE)
+# save to an HTML file if you want
+# saveWidget(RV_Teja_map, "RV_Teja_map.html", selfcontained = TRUE)
 
