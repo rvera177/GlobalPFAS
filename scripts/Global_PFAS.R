@@ -36,85 +36,10 @@ library(rnaturalearth) #for plotting country  outlines
 library(rnaturalearthdata)
 library(dplyr)
 
-#pull in global caravan data from my github. 
-Caravan_PFOA_Raw <- read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/Global%20datasets/Caravan_PFOA.csv")
-Caravan_PFOS_Raw = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/Global%20datasets/Caravan_PFOS.csv")
-site_info = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/Global%20datasets/Caravan_wqms_site_info.csv")
 
-#combine PFOA and PFOS by column names. They have the same column names so this should be easy
-#the raw datasets are in micrograms per liter. Convert to nanograms per liter
-Caravan_PFOA <- Caravan_PFOA_Raw %>%
-  rename(PFOA = obs) %>% #change obs column to coresponding compound
-  rename(`Sample Date (MM/DD/YYY)` = dates) %>%
-  mutate(PFOA = PFOA* 1000) %>% #converts ug/L column to ng/L by simple multiplying
-  select(-c(unit, variable)) #i don't care about the unit or variable columns, so i'm removing them
+#I want to bring in the papers our group has been extracting data from
 
-Caravan_PFOS <- Caravan_PFOS_Raw %>%
-  rename(PFOS = obs) %>%
-  rename(`Sample Date (MM/DD/YYY)` = dates) %>%
-  mutate(PFOS = PFOS* 1000) %>% #converts ug/L column to ng/L by simple multiplying
-  select(-c(unit, variable))
-
-Caravan_PFAS = bind_rows(Caravan_PFOA, Caravan_PFOS)
-
-#this next step might be unnescesary for a model.
-#PFOA and PFOS are in seperate rows, but i have their site id
-#and sample date. I'm going to combine PFOA and PFOS so we know both values 
-#across a single sampling event. This may have introduced error if 
-#multiple samples were collected at a site within a single day, which is definitely possible
-
-Caravan_PFAS <- Caravan_PFAS %>%
-  group_by(wqms_id, `Sample Date (MM/DD/YYY)`) %>%
-  summarize(
-    PFOA = sum(PFOA, na.rm = TRUE),
-    PFOS = sum(PFOS, na.rm = TRUE),
-    streamflow = sum(streamflow, na.rm = TRUE),
-    .groups = "drop"
-  ) %>%
- #Converts 0s back to NA if both original values were missing
-  mutate(across(c(PFOA, PFOS, streamflow), ~na_if(., 0)))
-
-#combine site coordinate information with PFAS concentrations
-Caravan_PFAS <- left_join(Caravan_PFAS, site_info, by = "wqms_id")
-
-
-#i'm going to rename columns to be consistent with other datasets
-Caravan_PFAS <- Caravan_PFAS %>%
-  rename(Longitude = wqms_lon) %>%
-  rename(Latitude = wqms_lat) %>%
-  rename(Streamflow = streamflow) %>%
-  rename(`Sample Name` = wqms_id) %>%
-  mutate(`Article (Author et al YYYY)` = "Caravan_2025") %>%
-  mutate(`Sample Type` = "Surface Water") %>%
-  #I also want to bring in all of the data from Caravan_PFAS, but it has a lot of info that i don't really need at the moment
-  # cutting down on some of the columns in Caravan_PFAS
-  select(c("Sample Name", "Sample Date (MM/DD/YYY)", "Sample Type", "Article (Author et al YYYY)", Longitude, Latitude, PFOA, PFOS, Streamflow))
-  
-#convert to SF object for plotting
-Caravan_PFAS_sf= st_as_sf(Caravan_PFAS,
-                  coords = c("Longitude", "Latitude"),  # x = Long, y = Lat
-                  crs = 4326) 
-
-#plot them on a world map
-#world <- ne_countries(scale = "large", returnclass = "sf")
-rivers <- ne_download(scale = 10, 
-                      type = 'rivers_lake_centerlines', 
-                      category = 'physical', 
-                      returnclass = "sf")
-#update the coordinate system to match the rivers layer
-Caravan_PFAS_sf = st_transform(Caravan_PFAS_sf, st_crs(rivers))
-
-ggplot(data = rivers) +
-  geom_sf(fill = "gray95", color = "gray20") +
-  geom_sf(data = Caravan_PFAS_sf %>% filter(!is.na(PFOA)), color = "red", size = 2, shape = 19) +
-  geom_sf(data = Caravan_PFAS_sf %>% filter(!is.na(PFOS)), add=TRUE, color = "blue", size = 2, shape = 19) +
-  ggtitle("Global Map of PFOA and PFAS") +
-  theme_classic()
-
-#Now that i have this large Caravan dataset plotted,
-#I want to bring in the papers our group has been
-#extracting data from
-
+Caravan_PFAS = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Caravan_PFAS.csv")
 Camacho_2024 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Camacho_et_al_2024_Florida.csv")
 Sims_2025 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Sims_et_al_2025_%20Western_United_States.csv")
 NH_DES_2026 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/NewHampshire_DES_PFAS_Data_Dump.csv")
@@ -124,12 +49,15 @@ Sharma_2016 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/re
 Zhang_2016 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Zhang_et_al_2016_RI_NY.csv")
 Scott_2009 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Scott_et_al_2009_Canada.csv")
 Goodrow_2020 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Goodrow_et_al_2020_New_Jersey.csv")
+Bai_Son_2021 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Bai_and_Son_2021_Renoe_LasVegas.csv")
 
 All_PFAS = bind_rows(Camacho_2024, Sims_2025, 
-      NH_DES_2026, Breitmeyer_2023, Ahrens_2023, Sharma_2016, Caravan_PFAS, Zhang_2016, Scott_2009, Goodrow_2020)
+      NH_DES_2026, Breitmeyer_2023, Ahrens_2023, Sharma_2016, 
+      Caravan_PFAS, Zhang_2016, Scott_2009, Goodrow_2020, Bai_Son_2021)
+All_PFAS_SW <- subset(All_PFAS, `Sample Type` == "Surface Water")
 
 #ggplot of an sf object won't work if their are NA's in the lat and long
-All_PFAS_sf <- All_PFAS %>% #remove NA's and make numeric. if not numeric, turns into an NA
+All_PFAS_sf <- All_PFAS_SW %>% #remove NA's and make numeric. if not numeric, turns into an NA
   mutate(across(-all_of(c("Article (Author et al YYYY)", "Sample Name", "Sample Type",
       "Sample Date (MM/DD/YYY)", "Sample Time", "Analysis Method")), ~ as.numeric(.))) %>%
   filter(!is.na(`Latitude`), !is.na(`Longitude`))
@@ -163,7 +91,7 @@ make_popup <- function(sf_obj) {
 }
 
 
-All_PFAS$popup <- make_popup(All_PFAS)
+All_PFAS_SW$popup <- make_popup(All_PFAS_SW)
 
 #build the leaflet map
 RV_Teja_map <- leaflet(options = leafletOptions(minZoom = 2, maxZoom = 18)) %>%
@@ -173,14 +101,14 @@ RV_Teja_map <- leaflet(options = leafletOptions(minZoom = 2, maxZoom = 18)) %>%
               group = "rivers",
               popup = ~name) %>%
   # PFOA points
-  addCircleMarkers(data = All_PFAS %>% filter(!is.na(PFOS)),
+  addCircleMarkers(data = All_PFAS_SW %>% filter(!is.na(PFOS)),
                    color = "red", fillColor = "red",
                    radius = 5, stroke = FALSE, fillOpacity = 0.9,
                    popup = ~popup,
                    #clusterOptions = markerClusterOptions(),
                    group = "PFOS") %>%
   # PFOS points
-  addCircleMarkers(data = All_PFAS %>% filter(!is.na(PFOA)),
+  addCircleMarkers(data = All_PFAS_SW %>% filter(!is.na(PFOA)),
                    color = "blue", fillColor = "blue",
                    radius = 3, stroke = FALSE, fillOpacity = 0.9,
                    popup = ~popup,
