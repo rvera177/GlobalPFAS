@@ -34,8 +34,7 @@ library(sf) #plotting the spatial objects
 library(ggplot2)
 library(rnaturalearth) #for plotting country  outlines
 library(rnaturalearthdata)
-library(dplyr)
-
+library(dplyr) #need this for pipes
 
 #I want to bring in the papers our group has been extracting data from
 
@@ -50,10 +49,11 @@ Zhang_2016 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/ref
 Scott_2009 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Scott_et_al_2009_Canada.csv")
 Goodrow_2020 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Goodrow_et_al_2020_New_Jersey.csv")
 Bai_Son_2021 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Bai_and_Son_2021_Renoe_LasVegas.csv")
+Teymoorian_2021 = read_csv("https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Teymoorian_2025_Montreal.csv")
 
 All_PFAS = bind_rows(Camacho_2024, Sims_2025, 
-      NH_DES_2026, Breitmeyer_2023, Ahrens_2023, Sharma_2016, 
-      Caravan_PFAS, Zhang_2016, Scott_2009, Goodrow_2020, Bai_Son_2021)
+      NH_DES_2026, Breitmeyer_2023, Ahrens_2023, Sharma_2016, Caravan_PFAS,
+      Zhang_2016, Scott_2009, Goodrow_2020, Bai_Son_2021, Teymoorian_2021)
 All_PFAS_SW <- subset(All_PFAS, `Sample Type` == "Surface Water")
 
 #ggplot of an sf object won't work if their are NA's in the lat and long
@@ -90,7 +90,6 @@ make_popup <- function(sf_obj) {
   })
 }
 
-
 All_PFAS_SW$popup <- make_popup(All_PFAS_SW)
 
 #build the leaflet map
@@ -101,24 +100,24 @@ RV_Teja_map <- leaflet(options = leafletOptions(minZoom = 2, maxZoom = 18)) %>%
               group = "rivers",
               popup = ~name) %>%
   # PFOA points
-  addCircleMarkers(data = All_PFAS_SW %>% filter(!is.na(PFOS)),
+  addCircleMarkers(data = All_PFAS_SW %>% filter(!is.na(PFOA)),
                    color = "red", fillColor = "red",
                    radius = 5, stroke = FALSE, fillOpacity = 0.9,
                    popup = ~popup,
                    #clusterOptions = markerClusterOptions(),
-                   group = "PFOS") %>%
+                   group = "PFOA") %>%
   # PFOS points
-  addCircleMarkers(data = All_PFAS_SW %>% filter(!is.na(PFOA)),
+  addCircleMarkers(data = All_PFAS_SW %>% filter(!is.na(PFOS)),
                    color = "blue", fillColor = "blue",
                    radius = 3, stroke = FALSE, fillOpacity = 0.9,
                    popup = ~popup,
                    #clusterOptions = markerClusterOptions(),
-                   group = "PFOA") %>%
-  addLayersControl(overlayGroups = c("rivers", "PFOS", "PFOA"),
+                   group = "PFOS") %>%
+  addLayersControl(overlayGroups = c("rivers", "PFOA", "PFOS"),
                    options = layersControlOptions(collapsed = FALSE)) %>%
   addLegend(position = "topright",
             colors = c("red", "blue"),
-            labels = c("PFOS", "PFOA"),
+            labels = c("PFOA", "PFOS"),
             title = "Compounds")
 
 # show map
