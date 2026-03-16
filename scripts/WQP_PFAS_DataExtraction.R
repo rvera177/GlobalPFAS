@@ -174,7 +174,7 @@ sampletype <- c("Stream", "Estuary", "Lake, Reservoir, Impoundment",
 activity_types <- c(
   "Sample-Routine","Quality Control Sample-Field Replicate",
   "Quality Control Sample-Lab Duplicate")
-#this takes about 5-10 minutes since i'm running for multiple compounds
+#this takes about 10-15 minutes since i'm running for multiple compounds
 #run for loop, Grab a coffee and stretch.
 for (st in state_list) {
   message("Fetching data for: ", st)
@@ -249,28 +249,28 @@ all_WQP_data <-all_WQP_data %>%
     ResultMeasureValue,                
   )
 
-
+ShortName <- c(
+  "PFOA", "PFPeA", "PFOSA", "PFBA", "PFOS", "PFNA", "PFNS",
+  "PFDA", "PFDA",          # both forms map to PFDA
+  "PFHxS", "PFHxS",        # both map to PFHxS
+  "PFHpA", "PFHpA",
+  "PFDoA", "PFBS",
+  "PFHxA", "PFHxA",
+  "3:3 FTCA", "5:3 FTCA", "7:3 FTCA",
+  "4:2 FTS", "6:2 FTS", "8:2 FTS",
+  "N-EtFOSE", "N-EtFOSA", "PFUnA",
+  "MeFOSAA", "N-MeFOSA", "N-EtFOSAA",
+  "PFEESA",
+  "ADONA", "ADONA",       # both spellings map to ADONA
+  "PFMPA", "PFMBA", "HFPO-DA",
+  "PFTrDA", "NFDHA", "PFHpS",
+  "11Cl-PF3OUdS", "9Cl-PF3ONS")
+  
 # okay so now i'm turning results into columns. 
 pfas_map <- tibble(
   CharacteristicName = pfas_names,
-  ShortName <- c(
-    "PFOA", "PFPeA", "PFOSA", "PFBA", "PFOS", "PFNA", "PFNS",
-    "PFDA", "PFDA",          # both forms map to PFDA
-    "PFHxS", "PFHxS",        # both map to PFHxS
-    "PFHpA", "PFHpA",
-    "PFDoA", "PFBS",
-    "PFHxA", "PFHxA",
-    "3:3 FTCA", "5:3 FTCA", "7:3 FTCA",
-    "4:2 FTS", "6:2 FTS", "8:2 FTS",
-    "N-EtFOSE", "N-EtFOSA", "PFUnA",
-    "MeFOSAA", "N-MeFOSA", "N-EtFOSAA",
-    "PFEESA",
-    "ADONA", "ADONA",       # both spellings map to ADONA
-    "PFMPA", "PFMBA", "HFPO-DA",
-    "PFTrDA", "NFDHA", "PFHpS",
-    "11Cl-PF3OUdS", "9Cl-PF3ONS"
-  )
-)
+  ShortName )
+
 
 # left_join mapping. If CharacteristicName variations exist, consider fuzzy matching or using str_detect patterns.
 all_WQP_data <- all_WQP_data %>%
