@@ -80,13 +80,16 @@ Caravan_PFAS <- left_join(Caravan_PFAS, site_info, by = "wqms_id")
 Caravan_PFAS <- Caravan_PFAS %>%
   rename(Longitude = wqms_lon) %>%
   rename(Latitude = wqms_lat) %>%
-  rename(Streamflow = streamflow) %>%
+  rename(`Streamflow (m3/s)` = streamflow) %>%
   rename(`Sample Name` = wqms_id) %>%
   mutate(`Article (Author et al YYYY)` = "Caravan_2025") %>%
   mutate(`Sample Type` = "Surface Water") %>%
   #I also want to bring in all of the data from Caravan_PFAS, but it has a lot of info that i don't really need at the moment
   # cutting down on some of the columns in Caravan_PFAS
-  select(c("Sample Name", "Sample Date (MM/DD/YYY)", "Sample Type", "Article (Author et al YYYY)", Longitude, Latitude, PFOA, PFOS, Streamflow))
+  select(c("Sample Name", "Sample Date (MM/DD/YYY)", "Sample Type", "Article (Author et al YYYY)", Longitude, Latitude, PFOA, PFOS, "Streamflow (m3/s)"))
+
+#save
+write.csv(Caravan_PFAS, "Caravan_PFAS_2026.csv")
 
 #convert to SF object for plotting
 Caravan_PFAS_sf= st_as_sf(Caravan_PFAS,
