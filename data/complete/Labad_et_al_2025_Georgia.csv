@@ -1,0 +1,10 @@
+Article (Author et al YYYY),Sample Name,Sample Type,Latitude,Longitude,Sampling Year,Sample Date (MM/DD/YYY),Sample Time,Analysis Method,Streamflow (m3/s),Sampling Depth (m),Units,PFOS,PFOA,FBSA,PFDA,PFNA,PFHxS,PFHxA,PFHpA,PFHpS,GenX,4:2 FTS,6:2 FTS,8:2 FTS,10:2 FTS,3:3 FTCA,5:3 FTCA,7:3 FTCA,PFPA,PFPeA,PFPeS,PFBS,PFBA,PFMOPrA,PFMOBA,PFMOAA,PFO2HxA,PFO3OA,PFO4DA,PFESA BP 1,PFESA BP 2,PFDoS,PFUnDA,FOSAA,N-MeFOSE,NMeFOSAA,NMeFOSA,N-EtFOSE,NEtFOSAA,N-EtFOSA,PFDS,PFTeDA,PFHxDA,PFNS,PFTrDA,PFDoA,PFOSA,9-Cl-PF3ONS,11-Cl-PF3OUdS,PFECA-G,ADONA,PFEESA,NFDHA,PFODA
+Labad_et_al_2025,R1,Surface Water,-84.385304,33.996313,2023,,,Undisclosed,,,ng/L,2.56,160,,,,2.52,,,,,,,,,,,,,,,3.36,111,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Labad_et_al_2025,R2,Surface Water,-84.323618,33.98692,2023,,,Undisclosed,,,ng/L,6.79,12.7,,,,26.4,,,,,,,,,,,,,,,1.88,142,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Labad_et_al_2025,R3,Surface Water,-84.336879,34.008158,2023,,,Undisclosed,,,ng/L,4.52,12.7,,,,1.49,,,,,,,,,,,,,,,1.91,148,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Labad_et_al_2025,R4,Surface Water,-84.255847,33.989788,2023,,,Undisclosed,,,ng/L,3.36,16,,,,185,,,,,,,,,,,,,,,2.52,131,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Labad_et_al_2025,R5,Surface Water,-84.403762,33.945428,2023,,,Undisclosed,,,ng/L,1.26,18,,,,11.3,,,,,,,,,,,,,,,2.02,131,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Labad_et_al_2025,R6,Surface Water,-84.446035,33.903444,2023,,,Undisclosed,,,ng/L,1.44,19.6,,,,1,,,,,,,,,,,,,,,2.03,134,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Labad_et_al_2025,R7,Surface Water,-84.443062,33.878193,2023,,,Undisclosed,,,ng/L,2.31,24.3,,,,1.8,,,,,,,,,,,,,,,3.4,49.5,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Labad_et_al_2025,R8,Surface Water,-84.452436,33.870392,2023,,,Undisclosed,,,ng/L,4.06,19,,,,6.4,,,,,,,,,,,,,,,3.3,62.9,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Labad_et_al_2025,Midtown ATL,Tap Water,-84.388512,33.784817,2023,,,Undisclosed,,,ng/L,1.45,18.3,,,,3.21,,,,,,,,,,,,,,,2.12,41.9,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
