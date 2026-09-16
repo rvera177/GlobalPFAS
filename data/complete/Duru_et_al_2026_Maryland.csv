@@ -1,0 +1,12 @@
+Article (Author et al YYYY),Sample Name,Latitude,Longitude,Sample Type,Sampling Year,Sample Date (MM/DD/YYY),Sample Time,Analysis Method,Streamflow (m3/s),Sampling Depth (m),Units,PFOS,PFOA,FBSA,PFDA,PFNA,PFHxS,PFHxA,PFHpA,PFHpS,GenX,4:2 FTS,6:2 FTS,8:2 FTS,10:2 FTS,3:3 FTCA,5:3 FTCA,7:3 FTCA,PFPA,PFPeA,PFPeS,PFBS,PFBA,PFMOPrA,PFMOBA,PFMOAA,PFO2HxA,PFO3OA,PFO4DA,PFESA BP 1,PFESA BP 2,PFDoS,PFUnDA,FOSAA,N-MeFOSE,NMeFOSAA,NMeFOSA,N-EtFOSE,NEtFOSAA,N-EtFOSA,PFDS,PFTeDA,PFHxDA,PFNS,PFTrDA,PFDoA,PFOSA,9-Cl-PF3ONS,11-Cl-PF3OUdS,PFECA-G,ADONA,PFEESA,NFDHA,PFODA
+Duru_et_al_2026,Loch Raven reservoir (Loch Raven),39.46296,-76.5666,Surface Water,2022,7/1/2022,,EPA 537.1,,,ng/L,1.3,1.4,,,,,1.2,,,,,,,,,,,,,,1.1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Duru_et_al_2026,Prettyboy Reservoir (Hampstead),39.65208,-76.74252,Surface Water,2022,7/1/2022,,EPA 537.1,,,ng/L,1,1.1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Duru_et_al_2026,Little Falls (White Hall),39.62151,-76.62908,Surface Water,2022,7/1/2022,,EPA 537.1,,,ng/L,,1.6,,,,,1.7,1.3,,,,,,,,,,,1.3,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Duru_et_al_2026,Green branch (Jacksonville),39.5129,-76.58621,Surface Water,2022,7/1/2022,,EPA 537.1,,,ng/L,2.1,4.8,,,,2.2,4.6,2,,,,,,,,,,,2.8,,2.8,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Duru_et_al_2026,Beaverdam Run (Cockeysville),39.48548,-76.6459,Surface Water,2022,7/1/2022,,EPA 537.1,,,ng/L,3.3,3.1,1,,,1.4,2.3,1.8,,,,,,,,,,,1.4,,3.6,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Duru_et_al_2026,Piney Run (Upperco),39.57558,-76.81133,Surface Water,2022,7/1/2022,,EPA 537.1,,,ng/L,,1.5,,,,,2.4,1,,,,,,,,,,,2.6,,1.1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Duru_et_al_2026,Winters Run (Joppa),39.44389,-76.31682,Surface Water,2022,7/1/2022,,EPA 537.1,,,ng/L,3.1,2.4,,,,2.1,1.4,1.1,,,,,,,,,,,1,,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Duru_et_al_2026,Gunpowder Falls (Perry Hall),39.417515,-76.428022,Surface Water,2022,7/1/2022,,EPA 537.1,,,ng/L,1,1.1,,,,,3.6,,,,,,,,,1,,,,,,,,,,,,,,,,,,,,3.9,,,,,,,,,,,,,,,,,
+Duru_et_al_2026,Bird River (White Marsh),39.382405,-76.394915,Surface Water,2022,7/1/2022,,EPA 537.1,,,ng/L,4.7,3.1,,,1,1.8,2.2,1.7,,,,,,,,,,,2.1,,1.8,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Duru_et_al_2026,Little Gunpowder River Upstream,39.4211,-76.3729,Surface Water,2022,7/1/2022,,EPA 537.1,,,ng/L,1.5,1.9,,,,,1.6,,,,,,,,,,,,,,1.6,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Duru_et_al_2026,Little Gunpowder River Downstream,39.41059,-76.36735,Surface Water,2022,7/1/2022,,EPA 537.1,,,ng/L,3.1,2.3,,,,,2.2,1.1,,,,,,,,,,,2,,1.7,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
