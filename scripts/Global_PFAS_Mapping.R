@@ -1,7 +1,7 @@
 
 #conus 2: back at it
 getwd()
-setwd("C:/Users/Ruli's computer/OneDrive/Documents/Soil&Water lab/GlobalPFAS")
+setwd("C:/Users/Marston User/Documents/Global Papers")
 
 
 # STEP 1: Bring in our beautiful datasets
@@ -13,7 +13,7 @@ library(tibble)
 # Define all dataset URLs on github
 dataset_catalog <- tribble(
   ~dataset_name,        ~url,                                                                                                                   ~expected_region,
-  "Caravan_PFAS",       "https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Caravan_PFAS_2026_standardized.csv",         "Global",
+  "Caravan_PFAS",       "https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Caravan_V1.1_2026_clean.csv",         "Global",
   "Camacho_2024",       "https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Camacho_et_al_2024_Florida.csv",  "USA",
   "Sims_2025",          "https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Sims_et_al_2025_%20Western_United_States.csv", "USA",
   "NH_DES_2026",        "https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/NewHampshire_DES_PFAS_Data_Dump.csv", "USA",
@@ -46,7 +46,8 @@ dataset_catalog <- tribble(
   "Ahrens_2016", "https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Ahrens_2016_LakeTana_Ethiopia_Clean.csv", "Ethiopia",
   "Duru_2026", "https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Duru_et_al_2026_Maryland.csv", "USA",
   "Hansen_2002", "https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Hansen_et_al_2002_Tennessee_River.csv", "USA",
-  "Quezada_2023","https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/QuezadaDavalos_2023_ColoradoSprings.csv","USA"
+  "Quezada_2023","https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/QuezadaDavalos_2023_ColoradoSprings.csv","USA",
+  "Galloway_2020", "https://raw.githubusercontent.com/rvera177/GlobalPFAS/refs/heads/main/data/complete/Galloway_2020_Ohio_WestVirginia.csv", "USA"
 )
 
 library(stringr)
@@ -322,7 +323,6 @@ p_freq <- ggplot() +
 
 p_freq
 
-?scale_color_viridis_d
 # NOTE: assumes PFOA is in ng/L — adjust the axis label if your units differ.
 # Log color scale because concentrations typically span orders of magnitude.
 p_pfoa <- ggplot() +
@@ -344,7 +344,7 @@ p_spatial <- p_freq + p_pfoa +
   plot_annotation(title = "PFAS Surface Water Monitoring Sites")
 
 p_spatial
-p_freq
+
 #ggsave("spatial_distribution.png", p_spatial, width = 12, height = 6, dpi = 300)
 
 
@@ -378,6 +378,38 @@ totals_row <- data.frame(
 pfos_counts <- bind_rows(pfos_counts, totals_row)
 
 print(pfos_counts)
+
+
+
+pfoa_counts <- global_pfas_raw %>%
+  filter(!is.na(PFOA), continent != "Unknown/Ocean") %>%
+  group_by(continent) %>%
+  summarise(
+    n_obs = n(),
+    n_sites = n_distinct(paste(Latitude, Longitude)),
+    pfoa_detected = sum(PFOA > 0),
+    pfoa_pct_detected = round(100 * sum(PFOA > 0) / n(), 1),
+    pfoa_mean = round(mean(PFOA, na.rm = TRUE), 2),
+    pfoa_median = round(median(PFOA, na.rm = TRUE), 2),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(n_obs))
+
+# Calculate totals row
+totals_row <- data.frame(
+  continent = "TOTAL",
+  n_obs = sum(pfoa_counts$n_obs),
+  n_sites = n_distinct(paste(global_pfas_raw$Latitude, global_pfas_raw$Longitude)),
+  pfoa_detected = sum(pfoa_counts$pfoa_detected),
+  pfoa_pct_detected = round(100 * sum(pfoa_counts$pfoa_detected) / sum(pfoa_counts$n_obs), 1),
+  pfoa_mean = round(mean(global_pfas_raw$PFOA, na.rm = TRUE), 2),
+  pfoa_median = round(median(global_pfas_raw$PFOA, na.rm = TRUE), 2)
+)
+
+# Bind totals row to table
+pfoa_counts <- bind_rows(pfoa_counts, totals_row)
+
+print(pfoa_counts)
 #write_csv(pfos_counts, "pfos_counts.csv")
 
 
@@ -386,11 +418,11 @@ top_4_sites <- global_pfas_raw %>%
   filter(!is.na(Latitude), !is.na(Longitude)) %>%
   group_by(Latitude, Longitude) %>%
   summarise(n_obs = n(), .groups = "drop") %>%
-  slice_max(n_obs, n = 4) %>%
+  slice_max(n_obs, n = 6) %>%
   mutate(site_id = paste0("Site ", row_number(), "\n(", round(Latitude, 2), ", ", round(Longitude, 2), ")\nn=", n_obs))
 
 # Filter to top 4 sites and prepare data
-major_compounds <- c("PFOS", "PFOA", "PFNA", "PFHxS", "PFBS", "PFDA")
+major_compounds <- c("PFOS", "PFOA", "PFNA", "PFHxS")
 
 top_sites_data <- global_pfas_raw %>%
   filter(!is.na(Latitude), !is.na(Longitude)) %>%
@@ -410,7 +442,7 @@ top_sites_data <- global_pfas_raw %>%
 p_top_sites <- ggplot(top_sites_data, aes(x = sample_date, y = concentration, color = compound)) +
   geom_line(size = 0.8, alpha = 0.7) +
   geom_point(size = 2, alpha = 0.6) +
-  facet_wrap(~site_id, scales = "free_y", ncol = 2) +
+  facet_wrap(~site_id, scales = "free_y", ncol = 3) +
   scale_color_viridis_d(option = "turbo") +
   scale_y_log10() +
   labs(
