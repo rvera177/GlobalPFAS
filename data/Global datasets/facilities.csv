@@ -1,0 +1,57 @@
+#,Country,City,Name of facility,Lat,Lon,Currently operating?,Refs with measurement data (see Table S4)
+1,UK,Thornton-Cleveleys,AGC Chemicals Europe,53.879,-3,Yes,Barber2007_ Dalmijn2025b_ O'Rourke2024
+2,France,Pierre-Benite,Arkema France and Daikin Chemical,45.71,4.824,Yes,Bach2017_ Dauchy2012_ Dauchy2023_ Mourier2019_ Saliu2025_ Teymoorian2025
+3,France,Tavaux,Syensqo (Solvay),47.052,5.41,Yes,
+4,Netherlands,Dordrecht,Chemours Netherlands,51.816,4.728,Yes,Brandsma2019_ Dalmijn2025a_ Gebbink2017_ Gerardu2023_ Pancras2024
+5,Germany,Burgkirchen,Dyneon_3M - Chemiepark Gendorf & Gore,48.178,12.724,Yes, Joerss2020_ Hangen2010
+6,Italy,Spinetta,Syensqo Specialty Polymers (Solvay),44.885,8.676,Yes,Morganti2021_ Rusconi2015_ Teymoorian2025_ Valsecchi2015
+7,Poland,Tarnów,Zak?ady Azotowe (Grupa Azoty),50.02,20.921,Fluoropolymer production stopped in 2009(?),
+8,Russia,Perm,HaloPolymer Perm,58.015,55.912,Yes,
+9,Russia,Kirovo-Chepetsk,HaloPolymer Kirovo-Chepetsk,58.538,49.981,Yes,
+10,USA,Augusta_ Georgia,Syensqo Specialty Polymers (Solvay),33.368,-82.012,under construction until ~2028,
+11,USA,Calvert City_ Kentucky,Arkema – Calvert City Plant,37.055,-88.366,Yes,
+12,USA,Bayonne_ New Jersey,AGC Chemicals,40.66,-74.106,closed in 2007,
+13,USA,Thorofare_ New Jersey,Syensqo Specialty Polymers (Solvay),39.843,-75.208,Yes,MacGilivray2021_ Washington2020
+14,USA,Deepwater_ New Jersey,Chemours Chambers Works,39.69,-75.501,Yes,Schumacher2024
+15,USA,Parkersburg_ West Virginia,Chemours Washington Works,39.269,-81.67,Yes,Barton2006_ Davis2007_ Frisbee2009_ Galloway2020_ Hansen2002_ Steenland2009_ Zhu2019_
+16,USA,Fayetteville_ North Carolina,Chemours Fayetteville Works,34.843,-78.839,Yes,Zhang2019_ Guillette2022_ Jensen2024_ Kirkwood2022_ Korlarz2020_ Kotlarz2024_ Men2024_ Petre2021_ Petre2022_ Pritchett2019_ Proctor2025_ Robuck2020_ Robuck2021_ Rock2023_ Shimizu2021_ Sun2016_ VanDerwerker2024_ Zhou2022
+17,USA,Decatur_ Alabama,Dyneon_3M – Decatur Plant,34.641,-87.038,Yes,Newton2017
+18,USA,Decatur_ Alabama,Daikin America – Decatur Plant,34.63,-87.041,Yes,Newton2017
+19,USA,Orange_ Texas,Syensqo Specialty Polymers (Solvay),30.051,-93.766,Yes,
+20,USA,Buffalo_ New York,DuPont Yerkes Plant,42.966,-78.919,Yes,
+21,Japan,Kamisu_ Ibaraki Prefecture,AGC – Kashima Plant,35.89,140.691,Yes,
+22,Japan,Kamisu_ Ibaraki Prefecture,Daikin Industries – Kashima Plant,35.845,140.731,Yes,
+23,Japan,Ichihara_ Chiba Prefecture,AGC – Chiba Plant,35.536,140.092,Yes,
+24,Japan,Settsu_ Osaka Prefecture,Daikin Industries – Yodogawa Plant,34.761,135.56,Yes,Asakawa2025_ Shiwaku2016_ Thepaksorn2023
+25,Japan,Iwaki_ Fukushima Prefecture,Kureha – Iwaki Factory,36.9,140.779,Yes,
+26,Japan,Shimizu_ Shizuoka,Chemours-Mitsui Fluoroproducts – Shimizu Factory,35.006,138.516,Yes,
+27,China,Huantai County_ Shandong,Shandong Dongyue Chemical Co._ Ltd.,36.971,118.032,Yes,ColomerVidal2022_ Feng2023_ Guo2023_ Heydebreck2015_ Joerss2020_ Li2022_ Li2025_ Liu2016_ Liu2019_ Liu2024_ Pan2017_ Sha2025_ Shi2015_ Su2016_ Su2017_ Wan2014_ Wang2016_ Xie2021_ Xie2022_ Yao2020_ Yao2021_ Zhao2020
+28,China,Huantai County_ Shandong,Shandong Huaxia Shenzhou New Material Co._ Ltd.,36.971,118.032,Yes,ColomerVidal2022_ Feng2023_ Guo2023_ Heydebreck2015_ Joerss2020_ Li2022_ Li2025_ Liu2016_ Liu2019_ Liu2024_ Pan2017_ Sha2025_ Shi2015_ Su2016_ Su2017_ Wan2014_ Wang2016_ Xie2021_ Xie2022_ Yao2020_ Yao2021_ Zhao2020
+29,China,Jinan_ Shandong,Jinan 3F Fluorochemical Co._ Ltd. _ Jinan Sinoflon New Material,36.898,117.451,Yes,
+30,China,Jinan_ Shandong,Shandong Hua Fluorochemical Co._ Ltd. (formerly Jinan Chemical Plant),36.898,117.451,Yes,
+31,China,Linyi County_ Shandong,Shandong Deyi New Material Co._ Ltd.,37.162,116.816,Yes,
+32,China,Huizhou_ Guangdong,Daikin Tsingyan Advanced Technologies – Huizhou,22.918,114.314,Yes,Chen2016_ Hua2023_ Jin2015_ Joerss2020_ Liu2022_ Shan2014
+33,China,Changshu_ Jiangsu,Arkema – Changshu,31.804,120.788,Yes,Chen2016_ Hua2023_ Jin2015_ Joerss2020_ Liu2022_ Shan2014
+34,China,Changshu_ Jiangsu,Daikin Fluorochemicals China,31.782,120.814,Yes,Chen2016_ Hua2023_ Jin2015_ Joerss2020_ Liu2022_ Shan2014
+35,China,Changshu_ Jiangsu,Syensqo Specialty Polymers (Changshu) (Solvay),31.814,120.806,Yes,Chen2016_ Hua2023_ Jin2015_ Joerss2020_ Liu2022_ Shan2014
+36,China,Changshu_ Jiangsu,Kureha (Changshu) Fluoropolymers Co._ Ltd.,31.787,120.808,Yes,Chen2016_ Hua2023_ Jin2015_ Joerss2020_ Liu2022_ Shan2014
+37,China,Changshu_ Jiangsu,Changshu 3F (Shanghai 3F),31.811,120.798,Yes,Chen2016_ Hua2023_ Jin2015_ Joerss2020_ Liu2022_ Shan2014
+38,China,Changshu_ Jiangsu,Changshu Xinhua Chemical Co._ Ltd.,31.784,120.806,Yes,Chen2016_ Hua2023_ Jin2015_ Joerss2020_ Liu2022_ Shan2014
+39,China,Changshu_ Jiangsu,Chemours Changshu Works,31.809,120.801,Yes,Chen2016_ Hua2023_ Jin2015_ Joerss2020_ Liu2022_ Shan2014
+40,China,Taizhou_ Jiangsu,Jiangsu Meilan Chemical Group Corporation,32.494,119.887,Yes,
+41,China,Zigong_ Sichuan,Chenguang Research Institute of Chemical Industry,29.164,104.959,Yes,
+42,China,Fuxin_ Liaoning,Fuxin Hengton Fluorine Chemicals Co._ Ltd.,41.949,121.589,Yes,Bao2011_ Bao2022_ Chen2018_ Joerss2020_ Wang2015
+43,China,Quzhou_ Zhejiang,Zhejiang Juhua Co._ Ltd.,28.9,118.886,Yes,
+44,China,Jinhua_ Zhejiang,Jinhua Yonghe Fluorochemical Co._ Ltd.,29.068,119.374,Yes,
+45,China,Hangzhou_ Zhejiang,Sinochem Lantain Co.,30.155,120.905,Yes,
+46,China,Shaoxing_ Zhejiang,Zhejiang Fluorine Chemical New Material Co._ Ltd.,30.145,120.846,Yes,
+47,China,Fengzhen_ Inner Mongolia,Inner Mongolia Wanhao Fluoro Chemical Co._ Ltd.,40.396,113.165,Yes,
+48,China,Shaowu_ Fujian,Shaowu Zonghe Jintange New Materials Co._ Ltd.,27.251,117.619,Yes,
+49,China,Sanming_ Fujian,Fujian Sannong New Materials Co._ Ltd. (Tahoe Group),26.201,117.503,Yes,
+50,China,Ruichang_ Jiangxi,Jiangxi Lee & Man Chemical Limited,29.702,115.94,Yes,
+51,China,Ganzhou_ Jiangxi,Ganzhou Lichang New Materials Co._ Ltd.,25.88,114.88,Yes,
+52,China,Minhang_ Shanghai,Shanghai Ofluorine Co._ Ltd.,31.076,121.442,Yes,
+53,China,Qianjiang_ Hubei,Hubei Fluorine New Material Co._ Ltd.,30.484,112.866,Yes,
+54,India,Rudraram_ Telangana,Hindustan Fluorocarbons,17.585,78.151,closed in 2021,
+55,India,Dahej_ Gujarat,Gujarat Fluorochemicals,21.694,72.589,Yes,
+56,India,Dahej_ Gujarat,SRF Limited,21.705,72.649,Yes,
